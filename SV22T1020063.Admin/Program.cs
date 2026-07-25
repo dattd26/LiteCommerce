@@ -73,11 +73,15 @@ ApplicationContext.Configure
     configuration: app.Configuration
 );
 
-//Get Connection String from appsettings.json
-string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
+//Get Connection String from environment variable or appsettings.json
+string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("DB_CONNECTION environment variable is not set.");
+    connectionString = builder.Configuration.GetConnectionString("LiteCommerceDB");
+}
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("DB_CONNECTION environment variable or ConnectionString 'LiteCommerceDB' is not set.");
 }
 // Initialize Business Layer Configuration
 SV22T1020063.BusinessLayers.Configuration.Initialize(connectionString);
